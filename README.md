@@ -1,0 +1,1 @@
+The function in the mark_abm.R file implements the Agent-Based Model from Noah Mark's 1998 paper "Beyond Individual Differences: Social Differentiation from First Principles" in the American Sociological Review

@@ -16,7 +16,7 @@ social_differentiation <- function(N, max_mem, t_max = 500, r_max = 30) {
     memory <- matrix(0, ncol = N, nrow = N*t_max)
     
     #initialize first fact known by all
-    memory[1,] <- max_mem
+    memory[1,] <- max_mem + 1
     
     #first unknown fact
     new_fact <- 2
@@ -45,25 +45,24 @@ social_differentiation <- function(N, max_mem, t_max = 500, r_max = 30) {
           #Enact one of your pieces by self
           facts <- which(known[,chooser] == 1)
           if (length(facts) == 1) {
-            memory[facts,chooser] <- max_mem + 1
+            fact <- facts
+            memory[fact,chooser] <- max_mem + 2
           } else {
             fact <- sample(facts, 1)
-            memory[facts,chooser] <- max_mem + 1
+            memory[fact,chooser] <- max_mem + 2
           }
         } else { #If interaction
           facts <- which(rowSums(known[,c(chooser, partner)]) > 0)
           fact <- sample(c(facts, new_fact), 1)
           
-          memory[fact,chooser] <- max_mem + 1
-          memory[fact,partner] <- max_mem + 1
+          memory[fact,chooser] <- max_mem + 2
+          memory[fact,partner] <- max_mem + 2
           
           if (fact == new_fact) {
             new_fact <- new_fact + 1
           }
           
         }
-        #print(paste(chooser, partner, fact, sep = " "))
-        
       }
       
       #Forgetting
@@ -92,9 +91,8 @@ social_differentiation <- function(N, max_mem, t_max = 500, r_max = 30) {
 }
 
 
-M <- social_differentiation(6, max_mem = 3, t_max = 500, r_max = 60)
+M <- social_differentiation(50, max_mem = 3, t_max = 500, r_max = 60)
 
-#Results are slightly off....
 M %>% filter(iteration == 500) %>%
   summarise(homogeneity = mean(homogeneity), groups = mean(groups))
 
