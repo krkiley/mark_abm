@@ -18,14 +18,14 @@ social_differentiation <- function(N, max_mem, t_max = 500, r_max = 30) {
     #initialize first fact known by all
     memory[1,] <- max_mem + 1
     
-    #first unknown fact
+    #set first unknown fact as 2
     new_fact <- 2
     
-    #Turn facts to 1/0
+    #Turn facts to 1/0 for measuring structure
     known <- memory
     known[known > 0] <- 1
     
-    #Calculate fact overlap
+    #Calculate fact overlap (social structure)
     social_structure <- (t(known) %*% known)
     
     #Iterate
@@ -35,14 +35,14 @@ social_differentiation <- function(N, max_mem, t_max = 500, r_max = 30) {
       order <- sample(1:N, replace = FALSE)
       
       for (p in 1:length(order)) {
-        #Select Interaction Partners
         chooser <- order[p]
+        #Draw interaction partners in proportion to fact overlap
         partner <- sample(1:N, 1, replace = TRUE, 
                           prob = social_structure[chooser,])
         
         #If solo interaction
         if (chooser == partner) {
-          #Enact one of your pieces by self
+          #Enact one of your pieces of knowledge by self
           facts <- which(known[,chooser] == 1)
           if (length(facts) == 1) {
             fact <- facts
@@ -70,11 +70,14 @@ social_differentiation <- function(N, max_mem, t_max = 500, r_max = 30) {
       known <- memory
       known[known > 0] <- 1
       
+      #Re-calculate structure for next iteration
       social_structure <- (t(known) %*% known)
-      
-      #Calculating summary statistics
-      #Cultural homogeneity
       K <- sum(rowSums(known) > 0)
+      
+      #Facts in system
+      output[output$iteration == t & output$run == r, ]$K <- K
+      
+      #Cultural homogeneity
       output[output$iteration == t & output$run == r, ]$homogeneity <- 
         sum(social_structure[upper.tri(social_structure)]) / 
         ((K * N * (N-1))/2)
