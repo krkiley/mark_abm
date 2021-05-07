@@ -94,7 +94,7 @@ social_differentiation <- function(N, max_mem, t_max = 500, r_max = 30) {
 }
 
 
-M <- social_differentiation(50, max_mem = 3, t_max = 500, r_max = 60)
+M <- social_differentiation(6, max_mem = 3, t_max = 1000, r_max = 60)
 
 M %>% filter(iteration == 500) %>%
   summarise(homogeneity = mean(homogeneity), groups = mean(groups))
